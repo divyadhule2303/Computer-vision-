@@ -1,0 +1,31 @@
+clc;
+clear;
+close all;
+
+img = imread("yellowlily.jpg");
+img = im2double(img);
+
+figure('Name','Original Image');
+imshow(img);
+title("Original Image");
+
+% Negative Transformation
+neg_img = 1 - img;
+figure;
+imshow(neg_img);
+title("Negative Transformation");
+
+% Logarithmic Transformation
+c = 1;
+log_img = c * log(1 + img);
+log_img = mat2gray(log_img);
+figure;
+imshow(log_img);
+title("Logarithmic Image");
+
+% Power-law (Gamma) Transformation
+gamma = 0.5;
+power_img = img .^ gamma;
+figure;
+imshow(power_img);
+title("Power-law Image");
