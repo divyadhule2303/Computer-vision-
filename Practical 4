@@ -1,0 +1,25 @@
+clc;
+clear;
+close all;
+img = imread('pears.png');
+% Convert to grayscale if the image is RGB
+if size(img, 3) == 3
+    grayImg = rgb2gray(img);
+else
+    grayImg = img;
+end
+% Detect SURF features (or you can use detectSIFTFeatures if available)
+points = detectSURFFeatures(grayImg);
+% Extract features
+[features, validPoints] = extractFeatures(grayImg, points);
+% Display the strongest points
+figure;
+subplot(1, 2, 1);
+imshow(img);
+hold on;
+plot(validPoints.selectStrongest(50));
+title('Image with Strongest Feature Points');
+hold off;
+% Display information about the first point
+disp('Information about the first detected feature point:');
+disp(validPoints(1));
