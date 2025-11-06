@@ -1,0 +1,53 @@
+!pip install deepface opencv-python matplotlib --quiet
+
+from deepface import DeepFace
+import cv2
+import matplotlib.pyplot as plt
+from google.colab import files
+
+print("📸 Please upload an image with a visible face...")
+uploaded = files.upload()
+image_path = list(uploaded.keys())[0]
+
+analysis = DeepFace.analyze(
+    img_path=image_path,
+    actions=['emotion'],       
+    enforce_detection=False
+)
+
+print("\n✅ Facial-Expression Analysis Results:\n")
+
+if isinstance(analysis, dict):
+    analysis = [analysis]
+
+for idx, face in enumerate(analysis, start=1):
+    print(f"Face {idx}:")
+    print("  Dominant Emotion:", face['dominant_emotion'])
+    print("  All Emotion Probabilities:", face['emotion'])
+    print("  Region:", face['region'], "\n")
+
+
+img = cv2.imread(image_path)
+
+for face in analysis:
+    region = face.get('region', {})
+    x = int(region.get('x', 0))
+    y = int(region.get('y', 0))
+    w = int(region.get('w', 0))
+    h = int(region.get('h', 0))
+
+    if w > 0 and h > 0:
+        
+        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+       
+        emotion = face['dominant_emotion']
+        cv2.putText(img, emotion, (x, max(y - 10, 0)),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+
+
+plt.figure(figsize=(6,6))
+plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+plt.axis("off")
+plt.title("Detected Facial Expressions")
+plt.show()
